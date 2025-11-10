@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vehicle Sales System - Login</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .error {
+      color: red;
+      font-size: 13px;
+      margin-top: -10px;
+      margin-bottom: 10px;
+      display: none;
+    }
+    .valid {
+      border-color: #28a745;
+    }
+    .invalid {
+      border-color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Holiday Travel Vehicle Sales System</h1>
+    <h2>Login to Your Account</h2>
+
+    <form id="loginForm" class="form-box" novalidate>
+      <label>Username</label>
+      <input type="text" id="username" placeholder="Enter your username" required>
+      <div id="userError" class="error">Please enter your username.</div>
+
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter your password" required>
+      <div id="passError" class="error">Password must be exactly 8 characters.</div>
+
+      <button type="submit" class="btn">Login</button>
+      <p class="note">Don’t have an account? <a href="register.html">Register here</a></p>
+    </form>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const userField = username;
+    const passField = password;
+
+    userField.addEventListener("input", () => {
+      if (userField.value.trim() !== "") {
+        userError.style.display = "none";
+        userField.classList.add("valid");
+        userField.classList.remove("invalid");
+      } else {
+        userError.style.display = "block";
+        userField.classList.add("invalid");
+        userField.classList.remove("valid");
+      }
+    });
+
+    passField.addEventListener("input", () => {
+      if (passField.value.trim().length === 8) {
+        passError.style.display = "none";
+        passField.classList.add("valid");
+        passField.classList.remove("invalid");
+      } else {
+        passError.style.display = "block";
+        passField.classList.add("invalid");
+        passField.classList.remove("valid");
+      }
+    });
+
+    loginForm.addEventListener("submit", e => {
+      e.preventDefault();
+      if (
+        userField.value.trim() !== "" &&
+        passField.value.trim().length === 8
+      ) {
+        alert(`✅ Login successful! Welcome ${userField.value}.`);
+        window.location.href = "dashboard.html";
+      }
+    });
+  </script>
+</body>
+</html>
