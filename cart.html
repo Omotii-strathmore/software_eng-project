@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart – Holiday Travel</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .cart-item {display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee;}
+    .cart-item img {width:60px;height:45px;object-fit:cover;border-radius:4px;}
+    .total {font-weight:600;font-size:1.2rem;margin-top:20px;text-align:right;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Holiday Travel Vehicle Sales System</h1>
+    <h2>Your Cart</h2>
+    <div id="cartList"></div>
+    <p class="total" id="total"></p>
+    <p class="note"><a href="dashboard.html">← Continue Shopping</a></p>
+  </div>
+
+  <script>
+    const CART_KEY = "holidayTravelCart";
+    const cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    const list = document.getElementById("cartList");
+    const totalEl = document.getElementById("total");
+
+    if (!cart.length) {
+      list.innerHTML = "<p>Your cart is empty.</p>";
+      totalEl.textContent = "";
+    } else {
+      let total = 0;
+      cart.forEach(item => {
+        total += item.price * item.qty;
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+          <div><strong>${item.make} ${item.model}</strong> × ${item.qty}</div>
+          <div>$${(item.price*item.qty).toLocaleString()}</div>
+        `;
+        list.appendChild(div);
+      });
+      totalEl.textContent = `Total: $${total.toLocaleString()}`;
+    }
+  </script>
+</body>
+</html>

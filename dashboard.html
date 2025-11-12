@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Holiday Travel – Choose Your Car</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* === Re-use error/valid classes === */
+    .error {color:red;font-size:13px;margin-top:-10px;margin-bottom:10px;display:none;}
+    .valid {border-color:#28a745;}
+    .invalid {border-color:red;}
+
+    
+    .container {
+      background-color: #fff;
+      border: 2px solid #ff3399;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 900px;           /* WIDER LAYOUT */
+      margin: 30px auto;
+      padding: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #ff3399;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    h2 {
+      color: #0073e6;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+   
+    .filters {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+    .filters input,
+    .filters select {
+      flex: 1;
+      min-width: 180px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    .filters input:focus,
+    .filters select:focus {
+      outline: none;
+      border-color: #0073e6;
+      box-shadow: 0 0 5px rgba(0,115,230,0.4);
+    }
+
+    /* === CAR GRID – 2 PER ROW === */
+    .car-grid {
+      display: grid;
+      gap: 24px;
+      margin-top: 10px;
+    }
+    @media (min-width: 600px) {
+      .car-grid {
+        grid-template-columns: repeat(2, 1fr);   /* 2 CARS PER ROW */
+      }
+    }
+    @media (max-width: 599px) {
+      .car-grid {
+        grid-template-columns: 1fr;              /* 1 ON MOBILE */
+      }
+    }
+
+    /* === CAR CARD === */
+    .car-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .car-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    }
+    .car-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-bottom: 1px solid #eee;
+    }
+    .car-info {
+      padding: 16px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .car-info h3 {
+      margin: 0 0 6px;
+      font-size: 1.25rem;
+      color: #ff3399;
+    }
+    .car-info p {
+      margin: 0 0 10px;
+      color: #555;
+      font-size: 0.95rem;
+    }
+    .price {
+      font-weight: 700;
+      color: #0073e6;
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+    }
+    .car-card button {
+      background: #ff3399;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .car-card button:hover {
+      background: #e62e8a;
+    }
+
+    /* === CART BADGE === */
+    .cart-badge {
+      position: relative;
+      display: inline-block;
+    }
+    .cart-badge span {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ff3399;
+      color: white;
+      font-size: 12px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* === LINKS === */
+    .note {
+      margin-top: 20px;
+      font-size: 15px;
+    }
+    .note a {
+      color: #ff3399;
+      text-decoration: none;
+    }
+    .note a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Holiday Travel Vehicle Sales System</h1>
+    <h2>Choose Your Dream Car</h2>
+
+    <!-- Filters -->
+    <div class="filters">
+      <input type="text" id="search" placeholder="Search make / model…" />
+      <select id="filterMake">
+        <option value="">All Makes</option>
+      </select>
+      <select id="filterPrice">
+        <option value="">Any Price</option>
+        <option value="0-20000">Up to $20,000</option>
+        <option value="20001-40000">$20,001 – $40,000</option>
+        <option value="40001-999999">$40,001 +</option>
+      </select>
+    </div>
+
+    <!-- Car Grid -->
+    <div class="car-grid" id="carGrid"></div>
+
+    <!-- Cart & Back -->
+    <p class="note">
+      <a href="cart.html" class="cart-badge">
+        View Cart <span id="cartCount">0</span>
+      </a>
+    </p>
+    <p class="note"><a href="login.html">Back to Login</a></p>
+  </div>
+
+  <script>
+    const catalog = [
+      {id: 1, make: "Toyota",    model: "Camry",    year: 2023, price: 28900, img: "images/camry.jpg"},
+      {id: 2, make: "Honda",     model: "Civic",    year: 2024, price: 25900, img: "images/civic.jpg"},
+      {id: 3, make: "Ford",      model: "Mustang",  year: 2022, price: 41900, img: "images/mustang.jpg"},
+      {id: 4, make: "Tesla",     model: "Model 3",  year: 2025, price: 45900, img: "images/tesla.jpg"},
+      {id: 5, make: "BMW",       model: "X3",       year: 2023, price: 53900, img: "images/bmw.jpg"},
+      {id: 6, make: "Hyundai",   model: "Tucson",   year: 2024, price: 31900, img: "images/hyundai.jpg"}
+    ];
+
+    const CART_KEY = "holidayTravelCart";
+    let cart = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+
+    function saveCart() {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      document.getElementById("cartCount").textContent = cart.reduce((s,i) => s + i.qty, 0);
+    }
+
+    function addToCart(car) {
+      const existing = cart.find(c => c.id === car.id);
+      if (existing) existing.qty++;
+      else cart.push({id: car.id, make: car.make, model: car.model, price: car.price, qty: 1});
+      saveCart();
+      alert(`${car.make} ${car.model} added to cart!`);
+    }
+
+    const grid = document.getElementById("carGrid");
+    function render(cars) {
+      grid.innerHTML = "";
+      if (!cars.length) {
+        grid.innerHTML = "<p style='grid-column:1/-1;text-align:center;color:#888;margin:40px 0;'>No cars match your filters.</p>";
+        return;
+      }
+      cars.forEach(car => {
+        const card = document.createElement("div");
+        card.className = "car-card";
+        card.innerHTML = `
+          <img src="${car.img}" alt="${car.make} ${car.model}">
+          <div class="car-info">
+            <h3>${car.make} ${car.model}</h3>
+            <p>${car.year} • <span class="price">$${car.price.toLocaleString()}</span></p>
+            <button onclick='addToCart(${JSON.stringify(car)})'>Add to Cart</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    const makeSelect = document.getElementById("filterMake");
+    const makes = [...new Set(catalog.map(c => c.make))].sort();
+    makes.forEach(m => {
+      const opt = document.createElement("option");
+      opt.value = m;
+      opt.textContent = m;
+      makeSelect.appendChild(opt);
+    });
+
+    const searchInp = document.getElementById("search");
+    const priceSel = document.getElementById("filterPrice");
+
+    function filterCars() {
+      const term = searchInp.value.trim().toLowerCase();
+      const make = makeSelect.value;
+      const [min, max] = priceSel.value ? priceSel.value.split("-").map(Number) : [0, Infinity];
+
+      const filtered = catalog.filter(car => {
+        const matchesSearch = `${car.make} ${car.model}`.toLowerCase().includes(term);
+        const matchesMake = !make || car.make === make;
+        const matchesPrice = car.price >= min && car.price <= max;
+        return matchesSearch && matchesMake && matchesPrice;
+      });
+      render(filtered);
+    }
+
+    searchInp.addEventListener("input", filterCars);
+    makeSelect.addEventListener("change", filterCars);
+    priceSel.addEventListener("change", filterCars);
+
+    render(catalog);
+    saveCart();
+  </script>
+</body>
+</html>
