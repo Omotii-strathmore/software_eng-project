@@ -23,28 +23,30 @@
     <h1>Holiday Travel Vehicle Sales System</h1>
     <h2>Customer Registration</h2>
 
-    <form id="registerForm" class="form-box" novalidate>
+  <form action="register.php" method="POST" id="registerForm" class="form-box" novalidate>
+
+
       <label>Full Name</label>
-      <input type="text" id="fullname" placeholder="Enter your full name" required>
+      <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
       <div id="nameError" class="error">Full name must contain only letters (A–Z).</div>
 
       <label>Email Address</label>
-      <input type="email" id="email" placeholder="Enter your email" required>
+      <input type="email" id="email" name="email" placeholder="Enter your email" required>
       <div id="emailError" class="error">Email must include both letters and numbers.</div>
 
       <label>Phone Number</label>
-      <input type="tel" id="phone" placeholder="e.g. 0712345678" required>
+      <input type="tel" id="phone" name="phone" placeholder="e.g. 0712345678" required>
       <div id="phoneError" class="error">Phone must be numeric and ≤10 digits.</div>
 
       <label>Username</label>
-      <input type="text" id="username" placeholder="Choose a username" required>
+      <input type="text" id="username" name="username" placeholder="Choose a username" required>
       <div id="userError" class="error">Username is required.</div>
 
       <label>Password</label>
-      <input type="password" id="password" placeholder="8 characters only" required>
+      <input type="password" id="password" name="password" placeholder="8 characters only" required>
       <div id="passError" class="error">Password must be exactly 8 characters.</div>
 
-      <input type="hidden" id="role" value="Customer">
+      <input type="hidden" id="role" name="role" value="Customer">
 
       <button type="submit" class="btn">Register</button>
       <p class="note">Already have an account? <a href="login.html">Login here</a></p>
@@ -123,21 +125,22 @@
     });
 
     form.addEventListener("submit", (e) => {
-      e.preventDefault();
+    
+   const allValid =
+    /^[A-Za-z ]+$/.test(fields.name.value.trim()) &&
+    /(?=.*[a-zA-Z])(?=.*\d)/.test(fields.email.value.trim()) &&
+    /^\d{1,10}$/.test(fields.phone.value.trim()) &&
+    fields.username.value.trim() !== "" &&
+    fields.password.value.trim().length === 8;
 
-      const allValid =
-        /^[A-Za-z ]+$/.test(fields.name.value.trim()) &&
-        /(?=.*[a-zA-Z])(?=.*\d)/.test(fields.email.value.trim()) &&
-        /^\d{1,10}$/.test(fields.phone.value.trim()) &&
-        fields.username.value.trim() !== "" &&
-        fields.password.value.trim().length === 8;
+  if (!allValid) {
+    // Stop form from submitting if validation fails
+    e.preventDefault();
+    alert("Please fix the highlighted errors.");
+  }
 
-      if (allValid) {
-        const role = "Customer";
-        alert(`Registration successful! Welcome ${fields.name.value} (${role}).`);
-        window.location.href = "login.html";
-      }
-    });
+  // If valid → allow form to submit normally
+});
   </script>
 </body>
 </html>
